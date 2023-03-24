@@ -317,7 +317,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl --insecure https://kvdb.io/AGTB84XtAckRbmJX54hdNQ/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              curl --insecure https://kvdb.io/7BxNdfG935QsDip7KHcMTR/migrtion_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             else
               echo "No migrations are pending" 
             fi
@@ -405,100 +405,99 @@ jobs:
       - revert-migrations
 
 
-  smoke-test:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
+  # smoke-test:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - checkout
      
-      - install_nodejs
-      - install_awscli
-      - run:
-          name: Backend smoke test.
-          command: |
-              BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-                --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-                --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                --output text)
-              export API_URL=http://${BACKEND_PUBLIC_IP}:3030
-              echo ${BACKEND_PUBLIC_IP}
-              echo backend-${CIRCLE_WORKFLOW_ID:0:7}
-              echo ${API_URL}
-              if curl -s $API_URL/api/status | grep "ok"
-              then
-                exit 0
-              else
-                exit 1
-              fi
-      - run:
-          name: Frontend smoke test.
-          command: |
-              FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
-              echo $FRONTEND_WEBSITE
-              if curl -s $FRONTEND_WEBSITE | grep "Welcome"
-              then
-                exit 0
-              else
-                exit 1
-              fi
-      - destroy-environment
-      - revert-migrations
+  #     - install_nodejs
+  #     - install_awscli
+  #     - run:
+  #         name: Backend smoke test.
+  #         command: |
+  #             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+  #               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+  #               --query 'Reservations[*].Instances[*].PublicIpAddress' \
+  #               --output text)
+  #             export API_URL=http://${BACKEND_PUBLIC_IP}:3030
+  #             echo ${BACKEND_PUBLIC_IP}
+  #             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
+  #             echo ${API_URL}
+  #             if curl -s $API_URL/api/status | grep "ok"
+  #             then
+  #               exit 0
+  #             else
+  #               exit 1
+  #             fi
+  #     - run:
+  #         name: Frontend smoke test.
+  #         command: |
+  #             FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
+  #             echo $FRONTEND_WEBSITE
+  #             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
+  #             then
+  #               exit 0
+  #             else
+  #               exit 1
+  #             fi
+  #     - destroy-environment
+  #     - revert-migrations
 
 
  
 
-  cloudfront-update:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            yum -y install tar gzip
-      - run:
-          name: Get old stack workflow id
-          command: |
-            # Fetch the Old workflow ID
-            cd .circleci/ansible
-            aws cloudformation \
-                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                --no-paginate --output text > OldWorkflowID.txt
-            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-      - run:
-          name: Update cloudfront distribution
-          command: |
-            cd .circleci/files
-            aws cloudformation deploy \
-              --template-file cloudfront.yml \
-              --stack-name InitialStack\
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
+  # cloudfront-update:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           yum -y install tar gzip
+  #     - run:
+  #         name: Get old stack workflow id
+  #         command: |
+  #           # Fetch the Old workflow ID
+  #           cd .circleci/ansible
+  #           aws cloudformation \
+  #               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+  #               --no-paginate --output text > OldWorkflowID.txt
+  #           echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+  #     - run:
+  #         name: Update cloudfront distribution
+  #         command: |
+  #           cd .circleci/files
+  #           aws cloudformation deploy \
+  #             --template-file cloudfront.yml \
+  #             --stack-name InitialStack\
+  #             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
       
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/OldWorkflowID.txt
+  #     - persist_to_workspace:
+  #         root: ~/
+  #         paths:
+  #           - project/.circleci/ansible/OldWorkflowID.txt
       
 
-
-      # - checkout
-      # - run:
-      #     name: Install dep / Save Old Workflow ID to kvdb.io
-      #     command: |
-      #       export OLD_WORKFLOW_ID=$(aws cloudformation \
-      #       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-      #       --no-paginate --output text)
-      #       echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-      #       curl https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"
-      # - run:
-      #     name: Update cloudfront distribution
-      #     command: |
-      #       aws cloudformation deploy \
-      #       --template-file .circleci/files/cloudfront.yml \
-      #       --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-      #       --stack-name InitialStack
-      # - destroy-environment
-      # - revert-migrations
+  #     # - checkout
+  #     # - run:
+  #     #     name: Install dep / Save Old Workflow ID to kvdb.io
+  #     #     command: |
+  #     #       export OLD_WORKFLOW_ID=$(aws cloudformation \
+  #     #       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+  #     #       --no-paginate --output text)
+  #     #       echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+  #     #       curl https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"
+  #     # - run:
+  #     #     name: Update cloudfront distribution
+  #     #     command: |
+  #     #       aws cloudformation deploy \
+  #     #       --template-file .circleci/files/cloudfront.yml \
+  #     #       --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+  #     #       --stack-name InitialStack
+  #     # - destroy-environment
+  #     # - revert-migrations
  
 
   cleanup:
@@ -544,7 +543,10 @@ jobs:
       #         aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
       #         aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
       #         aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-      #       fi
+      #       fi 
+      # master password:  W3yAk0TVCheMk9gOjC9a
+
+      # arn:aws:s3:::udapeople-benjamin
 
         
 workflows:
