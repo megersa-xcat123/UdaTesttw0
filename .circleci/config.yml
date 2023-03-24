@@ -62,7 +62,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/AGTB84XtAckRbmJX54hdNQ/migration_<< parameters.Workflow_ID >>)
+            SUCCESS=$(curl --insecure  https://kvdb.io/7BxNdfG935QsDip7KHcMTR/migrtion_<< parameters.Workflow_ID >>)
 
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
@@ -272,7 +272,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "5f:28:6c:c3:2f:b0:9b:19:16:db:a9:97:02:08:ea:76"
+            - "ff:db:35:5f:4d:76:7c:be:24:d8:fa:39:99:32:46:4c"
       - attach_workspace:
           at: ~/
     
@@ -375,7 +375,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: 
-            - "5f:28:6c:c3:2f:b0:9b:19:16:db:a9:97:02:08:ea:76"
+            - "ff:db:35:5f:4d:76:7c:be:24:d8:fa:39:99:32:46:4c"
       - attach_workspace:
           at: ~/
       - install_nodejs
