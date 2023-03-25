@@ -329,7 +329,6 @@ jobs:
             cd backend
             npm run build
             tar -czf artifact.tar.gz dist/* package*
-
             cd ..
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
             cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
@@ -339,7 +338,6 @@ jobs:
             export TYPEORM_MIGRATIONS_DIR=./migrations
             export TYPEORM_ENTITIES=./modules/domain/*/.entity{.ts,.js}
             export TYPEORM_MIGRATIONS=./migrations/*.ts
-
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
@@ -396,10 +394,7 @@ jobs:
               --output text)
             export API_URL=http://${BACKEND_PUBLIC_IP}:3030
 
-            echo "${API_URl}"
-            echo API_URL
-
-            if curl --connect-timeout 30 $API_URL/api/status | grep "ok"
+            if curl --connect-timeout 60 $API_URL/api/status | grep "ok"
             then
               exit 0
             else
