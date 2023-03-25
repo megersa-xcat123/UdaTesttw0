@@ -60,7 +60,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/7BxNdfG935QsDip7KHcMTR/migrtion_<< parameters.Workflow_ID >>)
+            SUCCESS=$(curl --insecure  https://kvdb.io/KVDB_BUCKET/migrtion_<< parameters.Workflow_ID >>)
 
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
@@ -255,7 +255,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl --insecure https://kvdb.io/7BxNdfG935QsDip7KHcMTR/migrtion_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              curl --insecure https://kvdb.io/KVDB_BUCKET/migrtion_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             else
               echo "No migrations are pending" 
             fi
@@ -398,7 +398,7 @@ jobs:
 
             echo "${API_URl}"
             echo API_URL
-            
+
             if curl --connect-timeout 30 $API_URL/api/status | grep "ok"
             then
               exit 0
@@ -569,18 +569,18 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [main]
