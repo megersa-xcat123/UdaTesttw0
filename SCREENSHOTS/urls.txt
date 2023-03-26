@@ -1,0 +1,10 @@
+[URL01]  Public Url to GitHub repository
+https://github.com/benjamin-andoh/cdond-c3-projectstarteraa
+
+
+
+[URL02] Public URL for your S3 Bucket
+https://udapeople-f0132b9.s3.amazonaws.com/index.html
+
+[URL02] CDN
+https://d3p4n6gjng31xu.cloudfront.net/#/employees/new
